@@ -1,4 +1,5 @@
 #pragma once
+#include <utility>
 
 namespace metaprogramming_course
 {
@@ -22,7 +23,7 @@ auto FindPointer(Iterator begin, Iterator end, Predicate&& pred)
 {
 	for (; begin != end; ++begin)
 	{
-		if (std::invoke(pred, *begin))
+		if (std::invoke(std::forward<Predicate>(pred), *begin))
 		{
 			return detail::GetPointer(begin);
 		}
@@ -33,6 +34,6 @@ auto FindPointer(Iterator begin, Iterator end, Predicate&& pred)
 template<class Range, class Predicate>
 auto FindPointer(Range&& range, Predicate&& pred)
 {
-	return FindPointer(std::begin(range), std::end(range), pred);
+	return FindPointer(std::begin(range), std::end(range), std::forward<Predicate>(pred));
 }
 }
