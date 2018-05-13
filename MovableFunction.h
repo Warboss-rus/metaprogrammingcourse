@@ -12,6 +12,8 @@ public:
 	virtual ~MovableFunctionImplInterface() = default;
 
 	virtual Ret operator()(Args&&) const = 0;
+
+	virtual MovableFunctionImplInterface<Ret, Args>* Clone() const = 0;
 };
 
 template<class T, class Ret, class Args>
@@ -26,9 +28,22 @@ public:
 	MovableFunctionImpl(const MovableFunctionImpl& other) = default;
 	MovableFunctionImpl(MovableFunctionImpl&& other) = default;
 
-	Ret operator()(Args&& args) const
+	Ret operator()(Args&& args) const override
 	{
 		return std::apply(m_data, std::forward<Args>(args));
+	}
+
+	MovableFunctionImplInterface<Ret, Args>* Clone() const override
+	{
+		if constexpr (std::is_copy_constructible_v<T>)
+		{
+			return new MovableFunctionImpl<T, Ret, Args>(T(m_data));
+		}
+		else
+		{
+			static_assert("Cannot copy");
+			return nullptr;
+		}
 	}
 private:
 	T m_data;
@@ -55,7 +70,7 @@ public:
 	MovableFunction(nullptr_t) noexcept {}
 	MovableFunction(const MovableFunction& other) 
 	{
-		Set(other);
+		m_storage.reset(other.m_storage->Clone());
 	}
 	MovableFunction(MovableFunction&& other) = default;
 
@@ -65,9 +80,9 @@ public:
 		Set(std::forward<Fn>(fn));
 	}
 
-	MovableFunction& operator=(const MovableFunction other)
+	MovableFunction& operator=(const MovableFunction& other)
 	{
-		Set(other);
+		m_storage.reset(other.m_storage->Clone());
 	}
 
 	MovableFunction& operator=(MovableFunction&& other) = default;
@@ -75,7 +90,7 @@ public:
 	template<class Fn>
 	MovableFunction& operator=(Fn&& fn)
 	{
-		
+		Set(std::forward<Fn>(fn));
 	}
 
 	operator bool() const noexcept

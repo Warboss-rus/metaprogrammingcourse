@@ -93,9 +93,9 @@ TEST_CASE("Can be moved with a movable only lambda", "[Movable function]") {
 	CHECK_THROWS_AS(f(std::string(DEFAULT_STRING_ARGUMENT), true), std::bad_function_call);
 }
 
-/*TEST_CASE("Can be copied with a copyable lambda", "[Movable function]") {
+TEST_CASE("Can be copied with a copyable lambda", "[Movable function]") {
 	bool called = false;
-	MovableFunction<int*(const std::string&, bool)> f = [&](const std::string& str, bool boolVal) {
+	const MovableFunction<int*(const std::string&, bool)> f = [&](const std::string& str, bool boolVal) {
 		CHECK(str == DEFAULT_STRING_ARGUMENT);
 		CHECK(boolVal);
 		called = true;
@@ -105,4 +105,4 @@ TEST_CASE("Can be moved with a movable only lambda", "[Movable function]") {
 	int* result = f2(std::string(DEFAULT_STRING_ARGUMENT), true);
 	CHECK(called);
 	CHECK(!result);
-}*/
+}
