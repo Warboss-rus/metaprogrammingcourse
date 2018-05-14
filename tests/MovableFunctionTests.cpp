@@ -106,3 +106,25 @@ TEST_CASE("Can be copied with a copyable lambda", "[Movable function]") {
 	CHECK(called);
 	CHECK(!result);
 }
+
+TEST_CASE("Supports functors returning void", "[Movable function]") {
+	bool called = false;
+	MovableFunction<void(const std::string&, bool)> f = [&](const std::string& str, bool boolVal) {
+		CHECK(str == DEFAULT_STRING_ARGUMENT);
+		CHECK(boolVal);
+		called = true;
+	};
+	CHECK_NOTHROW(f(std::string(DEFAULT_STRING_ARGUMENT), true));
+	CHECK(called);
+}
+
+TEST_CASE("Supports functors without arguments", "[Movable function]") {
+	bool called = false;
+	MovableFunction<int*()> f = [&]() {
+		called = true;
+		return nullptr;
+	};
+	int* result = f();
+	CHECK(called);
+	CHECK(!result);
+}
