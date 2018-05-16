@@ -1,5 +1,7 @@
 #pragma once
 #include <utility>
+#include <functional>
+#include <memory>
 
 namespace metaprogramming_course
 {
@@ -67,7 +69,7 @@ class MovableFunction
 	using Args = typename detail::ArgsIdentifier<T>::Arguments;
 public:
 	MovableFunction() = default;
-	MovableFunction(nullptr_t) noexcept {}
+	MovableFunction(std::nullptr_t) noexcept {}
 	MovableFunction(const MovableFunction& other) 
 	{
 		m_storage.reset(other.m_storage->Clone());
