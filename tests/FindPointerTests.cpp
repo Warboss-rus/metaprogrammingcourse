@@ -2,6 +2,7 @@
 #include "catch.hpp"
 #include <algorithm>
 #include <numeric>
+#include <memory>
 #include "../FindPointer.h"
 
 using namespace metaprogramming_course;

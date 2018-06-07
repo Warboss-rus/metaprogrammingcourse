@@ -1,23 +1,10 @@
 #pragma once
 #include <utility>
+#include <functional>
+#include <iterator>
 
 namespace metaprogramming_course
 {
-namespace detail
-{
-template<class Iterator>
-auto GetPointer(Iterator it)
-{
-	return it._Ptr;
-}
-
-template<class T>
-auto GetPointer(T* it)
-{
-	return it;
-}
-}
-
 template<class Iterator, class Predicate>
 auto FindPointer(Iterator begin, Iterator end, Predicate&& pred)
 {
@@ -25,10 +12,10 @@ auto FindPointer(Iterator begin, Iterator end, Predicate&& pred)
 	{
 		if (std::invoke(std::forward<Predicate>(pred), *begin))
 		{
-			return detail::GetPointer(begin);
+			return &*begin;
 		}
 	}
-	return std::iterator_traits<Iterator>::pointer();
+	return typename std::iterator_traits<Iterator>::pointer();
 }
 
 template<class Range, class Predicate>
