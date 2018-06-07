@@ -43,8 +43,7 @@ public:
 		}
 		else
 		{
-			static_assert("Cannot copy");
-			return nullptr;
+			throw std::runtime_error("cannot copy a non-copyable functor");
 		}
 	}
 private:
@@ -101,7 +100,7 @@ public:
 	}
 
 	template<class... Args>
-	ReturnType operator()(Args... args) const
+	ReturnType operator()(Args&&... args) const
 	{
 		if (!m_storage)
 		{
