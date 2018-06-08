@@ -128,3 +128,17 @@ TEST_CASE("Supports functors without arguments", "[Movable function]") {
 	CHECK(called);
 	CHECK(!result);
 }
+
+TEST_CASE("Throws when copying a movable only lambda", "[Movable function]") {
+	bool called = false;
+	auto expectedStringArgument = std::make_unique<std::string>(DEFAULT_STRING_ARGUMENT);
+	auto func = [expectedStr = std::move(expectedStringArgument), &called](const std::string& str, bool boolVal) {
+		CHECK(str == *expectedStr);
+		CHECK(boolVal);
+		called = true;
+		return nullptr;
+	};
+	const MovableFunction<int*(const std::string&, bool)> f = std::move(func);
+	MovableFunction<int*(const std::string&, bool)> f2;
+	REQUIRE_THROWS(f2 = f);
+}

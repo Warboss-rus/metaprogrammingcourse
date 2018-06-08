@@ -84,6 +84,7 @@ public:
 	MovableFunction& operator=(const MovableFunction& other)
 	{
 		m_storage.reset(other.m_storage->Clone());
+		return *this;
 	}
 
 	MovableFunction& operator=(MovableFunction&& other) = default;
