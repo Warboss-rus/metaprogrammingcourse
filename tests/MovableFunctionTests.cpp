@@ -93,20 +93,6 @@ TEST_CASE("Can be moved with a movable only lambda", "[Movable function]") {
 	CHECK_THROWS_AS(f(std::string(DEFAULT_STRING_ARGUMENT), true), std::bad_function_call);
 }
 
-TEST_CASE("Can be copied with a copyable lambda", "[Movable function]") {
-	bool called = false;
-	const MovableFunction<int*(const std::string&, bool)> f = [&](const std::string& str, bool boolVal) {
-		CHECK(str == DEFAULT_STRING_ARGUMENT);
-		CHECK(boolVal);
-		called = true;
-		return nullptr;
-	};
-	auto f2 = f;
-	int* result = f2(std::string(DEFAULT_STRING_ARGUMENT), true);
-	CHECK(called);
-	CHECK(!result);
-}
-
 TEST_CASE("Supports functors returning void", "[Movable function]") {
 	bool called = false;
 	MovableFunction<void(const std::string&, bool)> f = [&](const std::string& str, bool boolVal) {
@@ -127,18 +113,4 @@ TEST_CASE("Supports functors without arguments", "[Movable function]") {
 	int* result = f();
 	CHECK(called);
 	CHECK(!result);
-}
-
-TEST_CASE("Throws when copying a movable only lambda", "[Movable function]") {
-	bool called = false;
-	auto expectedStringArgument = std::make_unique<std::string>(DEFAULT_STRING_ARGUMENT);
-	auto func = [expectedStr = std::move(expectedStringArgument), &called](const std::string& str, bool boolVal) {
-		CHECK(str == *expectedStr);
-		CHECK(boolVal);
-		called = true;
-		return nullptr;
-	};
-	const MovableFunction<int*(const std::string&, bool)> f = std::move(func);
-	MovableFunction<int*(const std::string&, bool)> f2;
-	REQUIRE_THROWS(f2 = f);
 }
